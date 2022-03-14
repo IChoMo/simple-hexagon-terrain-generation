@@ -5,13 +5,13 @@ public class SimpleHexGrid : MonoBehaviour
     public GameObject Hexagon;
     public GameObject HexParentHolder;
     public int chunkSize = 50;
-    public int heightMultiplier = 1;
+    public int heightMultiplier = 2;
     public float Scale = 15;
     public float seed;
 
-    public float WaterLevel = 0;
-    public float SandUpToThisHeight = 0.2f;
-    public float GrassUpToRThisHeight = 0.6f;
+    public float WaterLevel = 1;
+    public float SandUpToThisHeight = 1.2f;
+    public float GrassUpToRThisHeight = 1.6f;
 
     public bool snappingHeights;
     public bool ExtendBottoms;
