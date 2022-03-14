@@ -166,7 +166,10 @@ public class SimpleHexGrid : MonoBehaviour
             if (!snappingHeights)
             {
                 var HexScale = Hex.transform.localScale;
-                Hex.transform.localScale = new Vector3(HexScale.x, HexScale.y, WaterLevel * 2);
+                Hex.transform.localScale = new Vector3(HexScale.x, HexScale.y, 1);
+
+                var HexPos = Hex.transform.position;
+                Hex.transform.position = new Vector3(HexPos.x, WaterLevel, HexPos.z);
             }
             else
             {
@@ -174,7 +177,7 @@ public class SimpleHexGrid : MonoBehaviour
                 Hex.transform.position = new Vector3(HexPos.x, WaterLevel, HexPos.z);
 
                 var HexScale = Hex.transform.localScale;
-                Hex.transform.localScale = new Vector3(HexScale.x, HexScale.y, WaterLevel);
+                Hex.transform.localScale = new Vector3(HexScale.x, HexScale.y, 1);
             }
         }
 
