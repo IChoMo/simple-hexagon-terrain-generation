@@ -11,7 +11,7 @@ public class SimpleHexGrid : MonoBehaviour
 
     public float WaterLevel = 1;
     public float SandUpToThisHeight = 1.2f;
-    public float GrassUpToRThisHeight = 1.6f;
+    public float GrassUpToThisHeight = 1.6f;
 
     public bool snappingHeights;
     public bool ExtendBottoms;
@@ -55,7 +55,7 @@ public class SimpleHexGrid : MonoBehaviour
             WaterLevel = Random.Range(1f, 2f);
             heightMultiplier = Mathf.RoundToInt(WaterLevel) + Random.Range(1, 5);
             SandUpToThisHeight = WaterLevel + heightMultiplier / 4 + Random.Range(0.2f, 2f);
-            GrassUpToRThisHeight = WaterLevel + SandUpToThisHeight + Random.Range(0.2f, 3f);
+            GrassUpToThisHeight = WaterLevel + SandUpToThisHeight + Random.Range(0.2f, 3f);
         }
 
         //For each direction x
@@ -193,7 +193,7 @@ public class SimpleHexGrid : MonoBehaviour
 
         if (HexHeight > SandUpToThisHeight)
         {
-            if (HexHeight <= GrassUpToRThisHeight)
+            if (HexHeight <= GrassUpToThisHeight)
             {
                 //grass
                 Hex.GetComponent<MeshRenderer>().material = Grass;
@@ -201,7 +201,7 @@ public class SimpleHexGrid : MonoBehaviour
             }
         }
 
-        if (HexHeight > GrassUpToRThisHeight)
+        if (HexHeight > GrassUpToThisHeight)
         {
             //rock
             Hex.GetComponent<MeshRenderer>().material = Stone;
