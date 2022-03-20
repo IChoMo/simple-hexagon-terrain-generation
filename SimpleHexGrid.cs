@@ -14,7 +14,6 @@ public class SimpleHexGrid : MonoBehaviour
     public float GrassUpToThisHeight = 1.6f;
 
     public bool snappingHeights;
-    public bool ExtendBottoms;
     public bool Randomize;
 
     public bool UpdateMesh;
@@ -81,11 +80,15 @@ public class SimpleHexGrid : MonoBehaviour
         //generate height based on noise
         float roundedHeight = Mathf.PerlinNoise(xCord, zCord);
 
+        //spawn Hex
+        var Hex = Instantiate(Hexagon, new Vector3(newX, 0, newZ), Quaternion.Euler(new Vector3(90, Hexagon.transform.rotation.y, Hexagon.transform.rotation.z)));
+        Hex.name = x + "," + z;
+
         if (snappingHeights)
         {
             //round that noise to the nearest decemel - times it by ten because mathf.round can only use whole numbers
             roundedHeight *= 10;
-            roundedHeight = Mathf.Round(roundedHeight);
+            roundedHeight = Mathf.Round(roundedHeight * heightMultiplier);
 
             //snap height to all even numbers
             if (roundedHeight % 2 == 0) { }
@@ -93,65 +96,23 @@ public class SimpleHexGrid : MonoBehaviour
 
             //divide result by ten to counter multiplying by ten earlier in this function
             roundedHeight /= 10;
-
-            roundedHeight = roundedHeight * heightMultiplier;
-
-            if (ExtendBottoms)
-            {
-                //spawn hex
-                var Hex = Instantiate(Hexagon, new Vector3(newX, 0, newZ), Quaternion.Euler(new Vector3(90, Hexagon.transform.rotation.y, Hexagon.transform.rotation.z)));
-                Hex.name = x + "," + z;
-                //if Hex in Odd row, then add offset to position
-                if (z % 2 != 0) { Hex.transform.position = new Vector3(Hex.transform.position.x + HexXIncreaseValue / 2, Hex.transform.position.y, Hex.transform.position.z); }
-
-                //set the height of the Hex
-                Hex.transform.localScale = new Vector3(Hex.transform.localScale.x, Hex.transform.localScale.y, roundedHeight * 2);
-
-                Hex.transform.parent = HexParentHolder.transform;
-                SetHexType(Hex, roundedHeight);
-            }
-            else
-            {
-                //spawn hex
-                var Hex = Instantiate(Hexagon, new Vector3(newX, roundedHeight, newZ), Quaternion.Euler(new Vector3(90, Hexagon.transform.rotation.y, Hexagon.transform.rotation.z)));
-                Hex.name = x + "," + z;
-                //if Hex in Odd row, then add offset to position
-                if (z % 2 != 0) { Hex.transform.position = new Vector3(Hex.transform.position.x + HexXIncreaseValue / 2, Hex.transform.position.y, Hex.transform.position.z); }
-
-                Hex.transform.parent = HexParentHolder.transform;
-                SetHexType(Hex, roundedHeight);
-            }
         }
         else
         {
-            roundedHeight = roundedHeight * heightMultiplier;
-
-            if (ExtendBottoms)
-            {
-                //spawn hex
-                var Hex = Instantiate(Hexagon, new Vector3(newX, 0, newZ), Quaternion.Euler(new Vector3(90, Hexagon.transform.rotation.y, Hexagon.transform.rotation.z)));
-                Hex.name = x + "," + z;
-                //if Hex in Odd row, then add offset to position
-                if (z % 2 != 0) { Hex.transform.position = new Vector3(Hex.transform.position.x + HexXIncreaseValue / 2, Hex.transform.position.y, Hex.transform.position.z); }
-
-                //set the height to double because it goes both up and down
-                Hex.transform.localScale = new Vector3(Hex.transform.localScale.x, Hex.transform.localScale.y, roundedHeight * 2);
-
-                Hex.transform.parent = HexParentHolder.transform;
-                SetHexType(Hex, roundedHeight);
-            }
-            else
-            {
-                //spawn hex
-                var Hex = Instantiate(Hexagon, new Vector3(newX, roundedHeight, newZ), Quaternion.Euler(new Vector3(90, Hexagon.transform.rotation.y, Hexagon.transform.rotation.z)));
-                Hex.name = x + "," + z;
-                //if Hex in Odd row, then add offset to position
-                if (z % 2 != 0) { Hex.transform.position = new Vector3(Hex.transform.position.x + HexXIncreaseValue / 2, Hex.transform.position.y, Hex.transform.position.z); }
-
-                Hex.transform.parent = HexParentHolder.transform;
-                SetHexType(Hex, roundedHeight);
-            }
+            roundedHeight *= heightMultiplier;
         }
+
+        //set the height to double because it goes both up and down
+        Hex.transform.localScale = new Vector3(Hex.transform.localScale.x, Hex.transform.localScale.y, roundedHeight * 2);
+
+        //set the position back to zero
+        Hex.transform.position = new Vector3(newX, 0, newZ);
+
+        //if Hex in Odd row, then add offset to position
+        if (z % 2 != 0) { Hex.transform.position = new Vector3(Hex.transform.position.x + HexXIncreaseValue / 2, Hex.transform.position.y, Hex.transform.position.z); }
+
+        Hex.transform.parent = HexParentHolder.transform;
+        SetHexType(Hex, roundedHeight);
     }
 
     void SetHexType(GameObject Hex, float HexHeight)
@@ -162,23 +123,11 @@ public class SimpleHexGrid : MonoBehaviour
             Hex.GetComponent<MeshRenderer>().material = Water;
             //Hex.tag = ("Water");
 
-            //if theres bumpy water this levels it all flat
-            if (!snappingHeights)
-            {
-                var HexScale = Hex.transform.localScale;
-                Hex.transform.localScale = new Vector3(HexScale.x, HexScale.y, 1);
+            //set the height to water height
+            Hex.transform.localScale = new Vector3(Hex.transform.localScale.x, Hex.transform.localScale.y, WaterLevel * 2);
 
-                var HexPos = Hex.transform.position;
-                Hex.transform.position = new Vector3(HexPos.x, WaterLevel, HexPos.z);
-            }
-            else
-            {
-                var HexPos = Hex.transform.position;
-                Hex.transform.position = new Vector3(HexPos.x, WaterLevel, HexPos.z);
-
-                var HexScale = Hex.transform.localScale;
-                Hex.transform.localScale = new Vector3(HexScale.x, HexScale.y, 1);
-            }
+            //set the position back to zero
+            Hex.transform.position = new Vector3(Hex.transform.position.x, 0, Hex.transform.position.z);
         }
 
         if (HexHeight > WaterLevel)
